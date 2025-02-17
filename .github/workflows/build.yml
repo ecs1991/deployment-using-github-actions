@@ -36,8 +36,8 @@ jobs:
           docker rm swiggy-clone1 || true
 
       - name: Deploy to container
-        run: docker run -d --name swiggy-clone1 -p 3000:3000 emerald1213/swiggy-clone:latest
+        run: docker run -d --name swiggy-clone12 -p 3000:3000 emerald1213/swiggy-clone:latest
       - name: Update kubeconfig
-        run: aws eks --region ap-south-1 update-kubeconfig --name EKS-CLOUD
+        run: aws eks --region ap-south-1 update-kubeconfig --name EKS-CLOUD1
       - name: Deploy to kubernetes
         run: kubectl apply -f deployment-service.yml
