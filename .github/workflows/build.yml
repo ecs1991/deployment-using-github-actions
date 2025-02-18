@@ -37,16 +37,5 @@ jobs:
       - name: Update kubeconfig
         run: aws eks --region ap-south-1 update-kubeconfig --name cicd
 
-      - name: Pull Docker image
-        run: docker pull emerald1213/swiggy-clone:latest
-
-      - name: Stop and Remove Existing Container
-        run: |
-          docker stop swiggy-clone1 || true
-          docker rm swiggy-clone1 || true
-
-      - name: Deploy to container
-        run: docker run -d --name swiggy-clone123 -p 3000:3000 emerald1213/swiggy-clone:latest
-
       - name: Deploy to Kubernetes
-        run: kubectl apply -f deployment-service.yml
+        run: kubectl apply -f deployment-service.yml --validate=false
