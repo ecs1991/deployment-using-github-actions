@@ -1,0 +1,35 @@
+# .gitlab-ci.yml
+
+image: docker:20.10.16
+
+variables:
+  DOCKER_CLI_ACI: "1"
+
+services:
+  - docker:dind
+
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  script:
+    - echo "Checking out code..."
+    - docker build -t swiggy-clone .
+    - docker tag swiggy-clone emerald1213/swiggy-clone:latest
+    - echo "$DOCKERHUB_TOKEN" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
+    - docker push emerald1213/swiggy-clone:latest
+  only:
+    - master
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying Docker container..."
+    - docker pull emerald1213/swiggy-clone:latest
+    - docker stop swiggy-clone1 || true
+    - docker rm swiggy-clone1 || true
+    - docker run -d --name swiggy-clone12 -p 3000:3000 emerald1213/swiggy-clone:latest
+  only:
+    - master
