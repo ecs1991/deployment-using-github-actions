@@ -27,6 +27,16 @@ jobs:
     needs: build
     runs-on: [self-hosted, Linux, X64]
     steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+
+      - name: Update kubeconfig
+        run: aws eks --region ap-south-1 update-kubeconfig --name cicd
+
       - name: Pull Docker image
         run: docker pull emerald1213/swiggy-clone:latest
 
@@ -37,7 +47,6 @@ jobs:
 
       - name: Deploy to container
         run: docker run -d --name swiggy-clone12 -p 3000:3000 emerald1213/swiggy-clone:latest
-      - name: Update kubeconfig
-        run: aws eks --region ap-south-1 update-kubeconfig --name cicd
-      - name: Deploy to kubernetes
+
+      - name: Deploy to Kubernetes
         run: kubectl apply -f deployment-service.yml
